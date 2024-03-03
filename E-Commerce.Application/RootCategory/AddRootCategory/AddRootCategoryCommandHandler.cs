@@ -22,7 +22,7 @@ namespace E_Commerce.Application.RootCategory.AddRootCategory
             {
                 var category = await _unitOfWork.RootCategoryRepository.Add(Domain.Model.RootCategory.RootCategory.Create(request.name));
 
-                _unitOfWork.save();
+                await _unitOfWork.save();
                 return Result.Success(category.Id.value);
 
             } catch (Exception ex)

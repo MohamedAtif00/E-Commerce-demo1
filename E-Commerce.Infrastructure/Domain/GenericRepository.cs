@@ -22,7 +22,7 @@ namespace E_Commerce.Infrastructure.Domain
 
         public virtual async Task<T> Add(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
+            var res = await _context.Set<T>().AddAsync(entity);
             return entity;
         }
 
@@ -36,15 +36,16 @@ namespace E_Commerce.Infrastructure.Domain
             return await _context.Set<T>().AsNoTracking().ToListAsync();
         }
 
-        public virtual async Task<T> GetById(Guid id)
+        public virtual async Task<T> GetById(TKey id)
         {
 
-            return await _context.Set<T>().FirstOrDefaultAsync(e => EF.Property<TKey>(e, nameof(Entity<TKey>.Id.value))!.Equals(id));
+            return await _context.Set<T>().FirstOrDefaultAsync(e => EF.Property<TKey>(e, nameof(Entity<TKey>.Id)).Equals(id));
         }
 
-        public virtual Task<T> Update(T entity)
+        public virtual async Task<T> Update(T entity)
         {
-            throw new NotImplementedException();
+            var entry =  _context.Set<T>().Update(entity);
+            return entry.Entity;
         }
     }
 }

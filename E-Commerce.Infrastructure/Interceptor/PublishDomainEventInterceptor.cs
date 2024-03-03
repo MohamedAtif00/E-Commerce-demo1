@@ -36,9 +36,9 @@ namespace E_Commerce.Infrastructure.Interceptor
         public override async ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
         {
             using var transaction = await eventData.Context.Database.BeginTransactionAsync(cancellationToken);
-
             try
             {
+
                 var domainResult = await PublishDomainEvents(eventData.Context);
                 await transaction.CommitAsync(cancellationToken);
                 if (domainResult) await eventData.Context.SaveChangesAsync();

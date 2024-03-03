@@ -40,6 +40,11 @@ namespace E_Commerce.Domain.Model.Category
             return new(CategoryId.CreateUnique(), name,null, ParentCategoryId);
         }
 
+        public void Update(string name)
+        {
+            this.Name = name;
+        }
+
         public Product.Product AddProduct(string name,string description,decimal price)
         {
             return Product.Product.Create(Id.value,name,description,price);

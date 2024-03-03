@@ -15,6 +15,11 @@ namespace E_Commerce.Domain.Common.Persistent
             value = id;
         }
 
+        public static ValueObjectId Create(Guid id)
+        {
+            return new(id);
+        }
+
         public override IEnumerable<object> GetEqualityComponents()
         {
             yield return value;

@@ -31,7 +31,7 @@ namespace E_Commerce.Infrastructure.Domain
 
         public void Dispose()
         {
-            Dispose();
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 

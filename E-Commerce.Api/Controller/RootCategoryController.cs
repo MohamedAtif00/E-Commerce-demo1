@@ -1,5 +1,8 @@
 ﻿using E_Commerce.Application.RootCategory.AddRootCategory;
+using E_Commerce.Application.RootCategory.ChangeRootCategoryName;
 using E_Commerce.Application.RootCategory.GetAllRootCategories;
+using E_Commerce.Application.RootCategory.GetSingleRootCategoryQuery;
+using E_Commerce.Application.RootCategory.RemoveRootCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +23,7 @@ namespace E_Commerce.Api.Controller
 
         // GET: api/<RootCategoryController>
         [HttpGet("GetAllCategories")]
-        public async Task<IActionResult> GetRootCategories()
+        public async Task<IActionResult> GetRootAllCategories()
         {
             var rootCategories = await _mediator.Send(new GetAllRootCategoriesQuery());
             return Ok(rootCategories.Value);
@@ -28,9 +31,10 @@ namespace E_Commerce.Api.Controller
 
         // GET api/<RootCategoryController>/5
         [HttpGet("GetSingleCategory/{id}")]
-        public string GetSingleRootCategory(int id)
+        public async Task<IActionResult> GetSingleRootCategory(Guid id)
         {
-            return "value";
+            var result = await _mediator.Send(new GetSingleRootCategoryQuery(id));
+            return Ok(result);
         }
 
         // POST api/<RootCategoryController>
@@ -42,15 +46,20 @@ namespace E_Commerce.Api.Controller
         }
 
         // PUT api/<RootCategoryController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("ChangeName/{id}")]
+        public async Task<IActionResult> Put([FromRoute] Guid id, [FromBody] string value)
         {
+            var result = await _mediator.Send(new ChangeRootCategoryNameCommand(id,value));
+            return Ok(result);
+
         }
 
         // DELETE api/<RootCategoryController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
+            var result = await _mediator.Send(new RemoveRootCategoryCommand(id));
+            return Ok(result);
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using E_Commerce.Application.Common;
+using E_Commerce.Domain.Model.Product;
 
 namespace E_Commerce.Application.Product.GetProductById
 {
@@ -22,7 +23,7 @@ namespace E_Commerce.Application.Product.GetProductById
 
         public async Task<Result<Domain.Model.Product.Product>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
-            var product = await _unitOfWork.ProductRepository.GetById(request.Id);
+            var product = await _unitOfWork.ProductRepository.GetById(ProductId.Create(request.Id));
 
             return product == null ?Result.NotFound() :Result.Success(product);
         }

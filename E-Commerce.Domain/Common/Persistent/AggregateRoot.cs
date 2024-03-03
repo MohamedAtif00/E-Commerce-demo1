@@ -14,7 +14,7 @@ namespace E_Commerce.Domain.Common.Persistent
         {
         }
 
-        IReadOnlyList<IDomainEvent> IHasDomainEvents.DomainEvents => throw new NotImplementedException();
+        IReadOnlyList<IDomainEvent> IHasDomainEvents.DomainEvents => _domainEvents;
 
         public void AddDomainEvent(IDomainEvent domainEvents)
         {

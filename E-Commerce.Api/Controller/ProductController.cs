@@ -1,4 +1,7 @@
-﻿using E_Commerce.Application.Product.GetProductById;
+﻿using E_Commerce.Application.Product.AddProduct;
+using E_Commerce.Application.Product.GetProductById;
+using E_Commerce.Application.Product.RemoveProduct;
+using E_Commerce.Application.Product.UpdateProduct;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,21 +40,28 @@ namespace E_Commerce.Api.Controller
 
         // POST api/<ProductController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post([FromBody]Guid CategoryId, string name,string description,decimal price)
         {
+            var result = await _mediator.Send(new AddProductCommand(CategoryId,name,description,price));
 
+            return Ok(result);
         }
 
         // PUT api/<ProductController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(Guid id, [FromBody] string productName,string description,decimal price)
         {
+            var result = await _mediator.Send(new UpdateProductCommand(id,productName,description,price));
+
+            return Ok(result);
         }
 
         // DELETE api/<ProductController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
+            var result = await _mediator.Send(new RemoveProductCommand(id));
+            return Ok(result);
         }
     }
 }
