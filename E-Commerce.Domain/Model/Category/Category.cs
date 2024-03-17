@@ -1,6 +1,7 @@
 ﻿using E_Commerce.Domain.Common.Persistent;
 using E_Commerce.Domain.Model.Product;
 using E_Commerce.Domain.Model.RootCategory;
+using E_Commerce.Domain.Model.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,12 @@ namespace E_Commerce.Domain.Model.Category
 {
     public sealed class Category : AggregateRoot<CategoryId>
     {
-        public readonly List<Category> _categories = new();
-
+        private readonly List<Category> _categories = new();
+        private readonly List<Visitor> _visitor =  new();
         // ------------------------------
 
         public IReadOnlyCollection<Category> ChildsCategories => _categories;
+        public IReadOnlyCollection<Visitor> Visitors => _visitor;
         public RootCategoryId? RootCategoryId { get;private set; }
         public CategoryId? ParentCategoryId { get;private set; }
         public string Name {  get;private set; }
@@ -50,6 +52,9 @@ namespace E_Commerce.Domain.Model.Category
             return Product.Product.Create(Id.value,name,description,price);
         }
 
-
+        public void AddNewVisitUser(UserId userId)
+        {
+            _visitor.Add(Visitor.Create(userId,Id));
+        }
     }
 }

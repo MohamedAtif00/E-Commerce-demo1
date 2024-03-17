@@ -2,10 +2,12 @@
 using E_Commerce.Domain.Model.Category;
 using E_Commerce.Domain.Model.Product;
 using E_Commerce.Domain.Model.RootCategory;
+using E_Commerce.Domain.Model.User;
 using E_Commerce.Infrastructure.Domain;
 using E_Commerce.Infrastructure.Domain.CategoryRepo;
 using E_Commerce.Infrastructure.Domain.ProductRepo;
 using E_Commerce.Infrastructure.Domain.RootCategoryRepo;
+using E_Commerce.Infrastructure.Domain.UserRepo;
 using E_Commerce.Infrastructure.Interceptor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,11 +26,13 @@ namespace E_Commerce.Infrastructure
         {
             services.AddDbContext<DbContextClass>(option => option.UseSqlServer(configuration.GetConnectionString("default")));
 
-            services.AddScoped<IUnitOfWork,UnitOfWork>();
+            services.AddTransient<IUnitOfWork,UnitOfWork>();
             services.AddScoped<IRootCategoryRepository,RootCategoryRepository>();
             services.AddScoped<ICategoryRepository,CategoryRepository>();
             services.AddScoped<IProductRepository,ProductRepository>();
-            services.AddScoped<PublishDomainEventInterceptor>();
+            services.AddScoped<IUserRepository,UserRepository>();
+            services.AddTransient<PublishDomainEventInterceptor>();
+            
 
             return services;
         }

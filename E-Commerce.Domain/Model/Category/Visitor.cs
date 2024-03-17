@@ -8,19 +8,23 @@ using System.Threading.Tasks;
 
 namespace E_Commerce.Domain.Model.Category
 {
-    public class Visitor : Entity<VisitorId>
+    public class Visitor : Entity<UserId>
     {
-        public ApplicationUserId UserId { get;private set; }
+        public CategoryId categoryId { get;private set; }
         public int visitCount { get;private set; }
 
-        protected Visitor(VisitorId id,ApplicationUserId userId) : base(id)
+        private Visitor() : base(UserId.CreateUnique())
+        { 
+        }
+        private Visitor(UserId userId,CategoryId categoryId) : base(userId)
         {
-            this.UserId = userId;
+            this.categoryId = categoryId;
+            visitCount = 1;
         }
 
-        public static Visitor Create(ApplicationUserId userId)
+        public static Visitor Create(UserId userId,CategoryId categoryId)
         {
-            return new(VisitorId.CreateUnique(),userId);
+            return new(userId,categoryId);
         }
 
         public void AddVisitingCount()=> visitCount++;

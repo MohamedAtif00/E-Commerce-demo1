@@ -1,4 +1,4 @@
-﻿using E_Commerce.Domain.Common.Persistent;
+﻿using E_Commerce.Domain.Common.Persistent.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace E_Commerce.Domain.Model.User
 {
-    public class ApplicationUser 
+    public interface IUserRepository :IGenericRepository<User,UserId>
     {
-        
-
     }
 }
