@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace E_Commerce.Api.Controller
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RootCategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -25,6 +25,7 @@ namespace E_Commerce.Api.Controller
 
         // GET: api/<RootCategoryController>
         [HttpGet("GetAllCategories")]
+
         public async Task<IActionResult> GetRootAllCategories()
         {
             var rootCategories = await _mediator.Send(new GetAllRootCategoriesQuery());
@@ -33,6 +34,7 @@ namespace E_Commerce.Api.Controller
 
         // GET api/<RootCategoryController>/5
         [HttpGet("GetSingleCategory/{id}")]
+
         public async Task<IActionResult> GetSingleRootCategory(Guid id)
         {
             var result = await _mediator.Send(new GetSingleRootCategoryQuery(id));

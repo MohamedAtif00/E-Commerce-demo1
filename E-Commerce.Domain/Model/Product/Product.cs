@@ -1,6 +1,7 @@
 ﻿using E_Commerce.Domain.Common.Persistent;
 using E_Commerce.Domain.Model.Category;
 using E_Commerce.Domain.Model.Product.Rule;
+using E_Commerce.Domain.Model.Seller;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace E_Commerce.Domain.Model.Product
         public string Description { get;private set; }
         public Price Price { get; private set; }
         public Discount Discount { get; private set; }
+        public SellerId sellerId { get; private set; }
 
         public Product(ProductId id):base(id)
         {

@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 namespace E_Commerce.Infrastructure.Domain
 {
     public class GenericRepository<T, TKey> : IGenericRepository<T, TKey> 
-        where T : Entity<TKey>
-        where TKey : notnull,ValueObjectId
+        where T : AggregateRoot<TKey>
+        where TKey :ValueObjectId
     {
         public readonly DbContextClass _context;
 
@@ -39,8 +39,12 @@ namespace E_Commerce.Infrastructure.Domain
         public virtual async Task<T> GetById(TKey id)
         {
 
-            return await _context.Set<T>().FirstOrDefaultAsync(e => EF.Property<TKey>(e, nameof(Entity<TKey>.Id)).Equals(id));
+            //return await _context.Set<T>().FirstOrDefaultAsync(e => EF.Property<TKey>(e, nameof(AggregateRoot<TKey>.Id.value)).Equals(id.value));
+            //return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => EF.Property<TKey>(e, nameof(AggregateRoot<TKey>.Id))!.Equals(id)) ?? null;
+            return await _context.Set<T>().FindAsync(id);
         }
+
+
 
         public virtual async Task<T> Update(T entity)
         {

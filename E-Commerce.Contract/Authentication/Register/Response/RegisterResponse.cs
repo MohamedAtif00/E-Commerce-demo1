@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_Commerce.Contract.Register.Response
+namespace E_Commerce.Contract.Authentication.Register.Response
 {
     public class RegisterResponse
     {

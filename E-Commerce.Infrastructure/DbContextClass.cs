@@ -1,7 +1,9 @@
-﻿using E_Commerce.Domain.Common.Persistent;
+﻿    using E_Commerce.Domain.Common.Persistent;
 using E_Commerce.Domain.Model.Category;
 using E_Commerce.Domain.Model.Product;
 using E_Commerce.Domain.Model.RootCategory;
+using E_Commerce.Domain.Model.Seller;
+using E_Commerce.Domain.Model.Token;
 using E_Commerce.Domain.Model.User;
 using E_Commerce.Infrastructure.Interceptor;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +29,8 @@ namespace E_Commerce.Infrastructure
         public DbSet<Product>  Products {get;set;}
         public DbSet<Category> categories { get; set; }
         public DbSet<User> users { get; set; }
+        public DbSet<Seller> sellers { get; set; }
+        public DbSet<RefreshToken> refreshTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,6 +40,8 @@ namespace E_Commerce.Infrastructure
         {
             builder.Ignore<List<IDomainEvent>>().ApplyConfigurationsFromAssembly(typeof(DbContextClass).Assembly);
 
+
+            
 
             base.OnModelCreating(builder);
         }

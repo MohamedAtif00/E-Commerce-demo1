@@ -1,5 +1,7 @@
 ﻿using E_Commerce.Domain.Common.Persistent;
 using E_Commerce.Domain.Common.Specification;
+using E_Commerce.Domain.Model.Seller;
+using E_Commerce.Domain.Model.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,8 @@ namespace E_Commerce.Domain.Model.User
         public string SecondName { get; private set; }
         public string Username { get; private set; }
         public string Email { get; private set; }
+        public SellerId? SellerId { get; private set; }
+        public RefreshTokenId? RefreshTokenId { get; private set; }
         
         
 

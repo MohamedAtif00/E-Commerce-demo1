@@ -1,4 +1,6 @@
-﻿using E_Commerce.Domain.Model.User;
+﻿using E_Commerce.Domain.Model.Seller;
+using E_Commerce.Domain.Model.Token;
+using E_Commerce.Domain.Model.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -16,12 +18,15 @@ namespace E_Commerce.Infrastructure.Domain.UserRepo
             builder.HasKey(t => t.Id);
 
             builder.Property(x => x.Id).HasConversion(x => x.value, value => UserId.Create(value));
+            builder.Property(x => x.RefreshTokenId).HasConversion(x =>x.value,value => RefreshTokenId.Create(value));
+
+            builder.Property(x => x.SellerId).HasConversion(x => x.value, value => SellerId.Create(value));
 
             builder.Property(x => x.Username).IsRequired().HasMaxLength(20);
 
-            builder.Property(x =>x.FirstName).IsRequired().HasMaxLength(10);
+            builder.Property(x =>x.FirstName).IsRequired().HasMaxLength(20);
 
-            builder.Property(x =>x.SecondName).IsRequired().HasMaxLength(10);
+            builder.Property(x =>x.SecondName).IsRequired().HasMaxLength(20);
 
             builder.Property(x => x.Email).IsRequired().HasMaxLength(40);
         }

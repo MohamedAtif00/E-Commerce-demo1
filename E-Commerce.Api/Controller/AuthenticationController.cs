@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using E_Commerce.Application;
 using E_Commerce.Application.Common;
-using E_Commerce.Contract.Register.Request;
 using AutoMapper;
 using E_Commerce.Application.Authentication;
+using E_Commerce.Contract.Authentication.Register.Request;
+using E_Commerce.Contract.Authentication.CheckUsername.Request;
+using MediatR;
+using E_Commerce.Application.User.AddNewUser;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,42 +22,33 @@ namespace E_Commerce.Api.Controller
         public readonly IHttpContextAccessor _contextAccessor;
         private readonly IAuthenticationService _authenticationService;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public AuthenticationController(IDataProtectionProvider idp, IHttpContextAccessor contextAccessor, IAuthenticationService authenticationService, IMapper mapper)
+        public AuthenticationController(IDataProtectionProvider idp, IHttpContextAccessor contextAccessor, IAuthenticationService authenticationService, IMapper mapper, IMediator mediator)
         {
             _idp = idp;
             _contextAccessor = contextAccessor;
             _authenticationService = authenticationService;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Register()
-        //{
-
-        //}
-
-        [HttpGet("login")]
-        public async Task<string> Login()
-        {
-            //var claims = new List<Claim>();
-            //claims.Add(new Claim("user", "Mohamed"));
-            //var identity = new ClaimsIdentity(claims, "cookie");
-            //var principle = new ClaimsPrincipal(identity);
-            //await _contextAccessor.HttpContext.SignInAsync("cookie", principle);
-            ////var protector = _idp.CreateProtector("auth-cookie");
-            ////var ctx = HttpContext.Response.Headers["set-cookie"] = $"auth={protector.Protect("username:Ahmed")}";
-            ////Response.Cookies.Append("set-cookie", $"auth={protector.Protect("username:Ahmed")}", new CookieOptions { Expires = DateTime.Now.AddDays(1)});
-            //return "value";
-            return string.Empty;
-        }
 
         // POST api/<AuthenticationController>
         [HttpPost("Register")]
         
         public async Task<IActionResult> Register([FromBody] RegisterRequest register)
         {
-            var jwtTokens = await _authenticationService.Register(_mapper.Map<RegisterDto>(register));
+            var result = await _mediator.Send(new AddNewUserCommand(register.FirstName,register.LastName,register.Username,register.Email,register.Password,register.PhoneNumber,register.Role));
+
+            return Ok(result);
+        }
+
+        [HttpPost("Login")]
+
+        public async Task<IActionResult> Login([FromBody] LoginRequest register)
+        {
+            var jwtTokens = await _authenticationService.Login(_mapper.Map<LoginDto>(register));
 
             return Ok(jwtTokens);
         }
@@ -63,6 +57,14 @@ namespace E_Commerce.Api.Controller
         public async Task<IActionResult> ConformEmail(string id,string Token)
         {
             var result = await _authenticationService.ConfirmEmail(id,Token);
+
+            return Ok(result);
+        }
+
+        [HttpPost("checkusername")]
+        public async Task<IActionResult> CheckUsername( CheckUsernameRequest username)
+        {
+            var result = await _authenticationService.CheckUsername(username.username);
 
             return Ok(result);
         }

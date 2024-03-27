@@ -30,6 +30,7 @@ namespace E_Commerce.Domain.Model.Category
         {
             Name = name;
             this.ParentCategoryId = ParentCategoryId;
+            this.RootCategoryId = rootCategoryId;
         }
 
         public static Category CreateRootCategory(string name,RootCategoryId rootCategoryId)

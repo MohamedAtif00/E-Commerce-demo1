@@ -2,6 +2,7 @@
 using E_Commerce.Domain.Model.Category;
 using E_Commerce.Domain.Model.Product;
 using E_Commerce.Domain.Model.RootCategory;
+using E_Commerce.Domain.Model.Token;
 using E_Commerce.Domain.Model.User;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,13 +17,14 @@ namespace E_Commerce.Infrastructure.Domain
     {
         private readonly DbContextClass _dbContext;
 
-        public UnitOfWork(DbContextClass dbContext, IProductRepository productRepository, IRootCategoryRepository rootCategoryRepository, ICategoryRepository categoryRepository, IUserRepository userRepository)
+        public UnitOfWork(DbContextClass dbContext, IProductRepository productRepository, IRootCategoryRepository rootCategoryRepository, ICategoryRepository categoryRepository, IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository)
         {
             _dbContext = dbContext;
             ProductRepository = productRepository;
             RootCategoryRepository = rootCategoryRepository;
             CategoryRepository = categoryRepository;
             UserRepository = userRepository;
+            RefreshTokenRepository = refreshTokenRepository;
         }
 
         public IProductRepository ProductRepository { get; }
@@ -31,6 +33,7 @@ namespace E_Commerce.Infrastructure.Domain
 
         public ICategoryRepository CategoryRepository { get; }
         public IUserRepository UserRepository { get; }
+        public IRefreshTokenRepository RefreshTokenRepository { get; }
 
         //public void Dispose()
         //{

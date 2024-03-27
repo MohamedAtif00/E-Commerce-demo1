@@ -17,43 +17,7 @@ namespace E_Commerce.Application
 
                 });
 
-            var jwtSettings = configuration.GetSection("JwtSettings");
-
-            var setting = services.Configure<JwtSettings>(jwtSettings);
-
-            services.AddAuthentication(opt => 
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x => 
-            {
-                x.SaveToken = true;
-                x.ClaimsIssuer = jwtSettings["Issuer"];
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ClockSkew = TimeSpan.Zero,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SigningKey"])),
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audiance"]
-                    
-                };
-                x.Events = new JwtBearerEvents 
-                {
-                    OnAuthenticationFailed = context => 
-                    {
-                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                            context.Response.Headers.Add("IS_TOKEN_EXPIRED","Y");
-                        return Task.CompletedTask;
-                        
-                    }
-                };
-                
-            });
-
-            services.AddScoped<Common.IAuthenticationService, Authentication.AuthenticationService>();
-            services.AddTransient<IEmailSender,EmailSender>();
+            
 
 
             //#region RootCategory

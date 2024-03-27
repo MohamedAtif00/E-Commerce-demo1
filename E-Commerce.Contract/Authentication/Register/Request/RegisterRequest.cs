@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_Commerce.Application.Authentication
+namespace E_Commerce.Contract.Authentication.Register.Request
 {
-    public class RegisterDto
+    public class RegisterRequest
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

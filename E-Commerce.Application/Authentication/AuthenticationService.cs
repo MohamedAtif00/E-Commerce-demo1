@@ -14,6 +14,10 @@ using System.Security.Principal;
 using Microsoft.IdentityModel.Tokens;
 using MediatR;
 using E_Commerce.Application.User.AddNewUser;
+using E_Commerce.Application.RefreshToken.GetRefreshTokenByUserId;
+using E_Commerce.Application.User.GetUserById;
+using E_Commerce.Application.RefreshToken.DeleteRefreshToken;
+using E_Commerce.Application.RefreshToken.AddRefreshToken;
 
 namespace E_Commerce.Application.Authentication
 {
@@ -92,10 +96,10 @@ namespace E_Commerce.Application.Authentication
                 //Generate JWT Token
                 var jwtToken = GenerateAccessToken(claimIdentity);
                 //Generate Refresh Toekn
-
+                var refreshToken = await GenerateRefreshToken(newuser);
                 //Set these into jwwtTokenVm
                 jwttokenDto.JwtToken = jwtToken;
-                jwttokenDto.RefreshToken = string.Empty;
+                jwttokenDto.RefreshToken = refreshToken;
                 jwttokenDto.Error = string.Empty;
 
                 return Result.Success(jwttokenDto);
@@ -105,6 +109,68 @@ namespace E_Commerce.Application.Authentication
                 return Result.Error(ex.Message);
             }
 
+        }
+
+        public async Task<Result<JwtTokenDto>> Login(LoginDto loginDto)
+        {
+            try
+            {
+
+                var jwttokenDto = new JwtTokenDto();
+                if (loginDto == null)
+                {
+                    jwttokenDto.Error = "Invalid input";
+                    return jwttokenDto;
+                }
+                if (string.IsNullOrEmpty(loginDto.Username))
+                {
+                    jwttokenDto.Error = "username is required";
+                    return jwttokenDto;
+                }
+                var existinguser = await _userManager.FindByNameAsync(loginDto.Username);
+                if (existinguser == null)
+                {
+                    jwttokenDto.Error = "username is not found";
+                    return Result.NotFound(jwttokenDto.Error);
+                }
+                var user = await _userManager.FindByNameAsync(loginDto.Username);
+                if (user == null) return Result.NotFound("this user is not exist");
+                var locked = await _userManager.IsLockedOutAsync(user);
+                if (locked) return Result.Error("Account lockedout");
+                var passwordValid = await _userManager.CheckPasswordAsync(user,loginDto.Password);
+                if (!passwordValid) 
+                {
+                    await _userManager.AccessFailedAsync(user);
+                    return Result.Error("username or password is not valid");
+                }
+                
+                //Generate Claims Identity
+                var claimIdentity = GenerateClaimsIdentity(user);
+                //Generate JWT Token
+                var jwtToken = GenerateAccessToken(claimIdentity);
+                //Generate Refresh Toekn
+                var refreshToken = await GenerateRefreshToken(user);
+                //Set these into jwwtTokenVm
+                jwttokenDto.JwtToken = jwtToken;
+                jwttokenDto.RefreshToken = refreshToken;
+                jwttokenDto.Error = string.Empty;
+
+                return Result.Success(jwttokenDto);
+
+            }
+            catch (Exception ex)
+            {
+                return Result.Error(ex.Message);
+            }
+
+        }
+
+        public  async Task<Result<string>> CheckUsername(string username)
+        {
+            var result = await _userManager.FindByNameAsync(username);
+
+            if (result == null) return Result.NotFound("this username is not exist");
+            return Result.Success(result.UserName);
         }
 
         private static ClaimsIdentity GenerateClaimsIdentity(IdentityUser<Guid> user) 
@@ -119,6 +185,7 @@ namespace E_Commerce.Application.Authentication
                 new Claim("usernm",user.UserName),
                 new Claim("email",user.Email),
                 new Claim("password",user.PasswordHash),
+                new Claim(ClaimTypes.Role,"user"),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat,unixEpochDatestr)
             };
@@ -137,6 +204,18 @@ namespace E_Commerce.Application.Authentication
                     new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SigningKey)),SecurityAlgorithms.HmacSha256)
                 );
             return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        }
+
+        private async Task<string> GenerateRefreshToken(IdentityUser<Guid> newUser)
+        {
+            var result = await _mediator.Send(new GetUserByIdQuery(UserId.Create(newUser.Id)));
+            var id = result.Value.Id;
+            var existRefreshToken = await _mediator.Send(new GetRefreshTokenByUserIdQuery(id));
+
+            if (existRefreshToken.Value != null) await _mediator.Send(new DeleteRefreshTokenCommand(existRefreshToken.Value.Id));
+            var refreshToken = Domain.Model.Token.RefreshToken.Create(result.Value.Id,DateTime.UtcNow,DateTime.UtcNow.AddMinutes(Convert.ToInt32(_jwtSettings.RefreshTokenExpiryMinutes)));
+            var newRefreshToken = await _mediator.Send(new AddRefreshTokenCommand(refreshToken.UserId,refreshToken.IssuedUtc,refreshToken.ExpiresUtc));
+            return newRefreshToken.Value.Id.ToString()?? string.Empty;
         }
 
         public async Task<Result> ConfirmEmail(string userId , string code)

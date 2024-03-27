@@ -4,7 +4,7 @@ namespace E_Commerce.Domain.Model.Product
 {
     public class ProductId :ValueObjectId
     {
-        public ProductId(Guid value): base(value)
+        private ProductId(Guid value): base(value)
         {
         }
         public static ProductId CreateUnique()

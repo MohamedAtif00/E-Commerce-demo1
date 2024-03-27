@@ -1,5 +1,6 @@
 ﻿using E_Commerce.Domain.Model.Category;
 using E_Commerce.Domain.Model.Product;
+using E_Commerce.Domain.Model.Seller;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -18,6 +19,7 @@ namespace E_Commerce.Infrastructure.Domain.ProductRepo
 
             builder.Property(x => x.Id).HasConversion(x =>x.value ,value =>ProductId.Create(value));
             builder.Property(x => x.CategoryId).HasConversion(x =>x.value,value => CategoryId.Create(value));
+            builder.Property(x => x.sellerId).HasConversion(x =>x.value,value =>SellerId.Create(value));
 
             builder.Property(x =>x.ProductName).HasMaxLength(128);
             builder.Property(x =>x.Description).HasMaxLength(200);
